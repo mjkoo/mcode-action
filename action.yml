@@ -2,6 +2,8 @@ name: 'Giftwrap Action'
 description: 'Provide a description here'
 author: 'ForAllSecure'
 inputs:
+  cargo-fuzz-target:
+    description: Cargo fuzz target to build
   mayhem-url:
     description: URL pointing to your Mayhem instance
     required: true
