@@ -1,9 +1,10 @@
 import * as core from "@actions/core";
+import * as exec from "@actions/exec";
+import * as github from "@actions/github";
 import * as tc from "@actions/tool-cache";
+import { chmodSync } from "fs";
 
-// Return local path to donwloaded or cached CLI
-async function mcodeCLI(): Promise<string> {
-  // Get latest version from API
+async function giftwrapTool(): Promise<string> {
   const cliVersion = "latest";
   const os = "Linux";
   const bin = "giftwrap";
@@ -16,24 +17,34 @@ async function mcodeCLI(): Promise<string> {
   }
 
   // Download the CLI and cache it if version is set
-  const mcodePath = await tc.downloadTool(
-    `https://mayhem.forallsecure.com/cli/${os}/${bin}`
+  // TODO: Don't host this in git, BFG this
+  const giftwrapPath = await tc.downloadTool(
+    "https://github.com/mjkoo/mcode-action/raw/main/bin/giftwrap"
   );
-  chmodSync(mcodePath, 0o755);
-  const folder = await tc.cacheFile(mcodePath, bin, bin, cliVersion, os);
+  chmodSync(giftwrapPath, 0o755);
+  const folder = await tc.cacheFile(giftwrapPath, bin, bin, cliVersion, os);
+
   return `${folder}/${bin}`;
 }
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput("milliseconds");
-    core.debug(`Waiting ${ms} milliseconds ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const giftwrap = await giftwrapTool();
 
-    core.debug(new Date().toTimeString());
-    await wait(parseInt(ms, 10));
-    core.debug(new Date().toTimeString());
+    const mayhemUrl: string = core.getInput("mayhem-url", { required: true });
+    const mayhemToken: string = core.getInput("mayhem-token", {
+      required: true,
+    });
+    const githubToken: string | undefined = core.getInput("github-token");
 
-    core.setOutput("time", new Date().toTimeString());
+    if (githubToken !== undefined) {
+      const octokit = github.getOctokit(githubToken);
+      const context = github.context;
+      core.debug(`${context}`);
+    }
+
+    //process.env["MAYHEM_TOKEN"] = mayhemToken;
+    //process.env["MAYHEM_URL"] = mayhemUrl;
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message);
   }
