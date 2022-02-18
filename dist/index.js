@@ -70,7 +70,7 @@ function run() {
             if (githubToken !== undefined) {
                 const octokit = github.getOctokit(githubToken);
                 const context = github.context;
-                core.debug(`${context}`);
+                core.debug(`${JSON.stringify(context)}`);
             }
             //process.env["MAYHEM_TOKEN"] = mayhemToken;
             //process.env["MAYHEM_URL"] = mayhemUrl;
