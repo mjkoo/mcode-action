@@ -67,7 +67,7 @@ function run() {
             const mayhemToken = core.getInput("mayhem-token", {
                 required: true,
             });
-            const githubToken = core.getInput("github-token");
+            const githubToken = core.getInput("github-token") || process.env.GITHUB_TOKEN;
             if (githubToken !== undefined) {
                 const octokit = github.getOctokit(githubToken);
                 const context = github.context;

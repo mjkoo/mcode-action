@@ -35,7 +35,8 @@ async function run(): Promise<void> {
     const mayhemToken: string = core.getInput("mayhem-token", {
       required: true,
     });
-    const githubToken: string | undefined = core.getInput("github-token");
+    const githubToken: string | undefined =
+      core.getInput("github-token") || process.env.GITHUB_TOKEN;
 
     if (githubToken !== undefined) {
       const octokit = github.getOctokit(githubToken);
