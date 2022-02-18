@@ -1,11 +1,17 @@
-name: 'Your name here'
+name: 'Giftwrap Action'
 description: 'Provide a description here'
-author: 'Your name or organization here'
+author: 'ForAllSecure'
 inputs:
-  milliseconds: # change this
+  mayhem-url:
+    description: URL pointing to your Mayhem instance
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  mayhem-token:
+    description: Personal API token for authenticating to Mayhem
+    required: true
+  github-token:
+    description: Github token for posting feedback
+    required: false
+    default: ${{ github.token }}
 runs:
   using: 'node12'
   main: 'dist/index.js'
