@@ -40,6 +40,19 @@ async function run(): Promise<void> {
     if (githubToken !== undefined) {
       const octokit = github.getOctokit(githubToken);
       const context = github.context;
+      const head_sha: string | undefined =
+        context.payload.after ||
+        context.payload.pull_request?.head.sha ||
+        process.env.GITHUB_SHA;
+
+      await octokit.rest.checks.create({
+        ...context.repo,
+        name: "Mayhem for Code",
+        head_sha,
+        started_at: new Date().toISOString(),
+        status: "in_progress",
+      });
+
       core.debug(`${JSON.stringify(context)}`);
     }
 

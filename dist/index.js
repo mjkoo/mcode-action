@@ -59,6 +59,7 @@ function giftwrapTool() {
     });
 }
 function run() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const giftwrap = yield giftwrapTool();
@@ -70,6 +71,10 @@ function run() {
             if (githubToken !== undefined) {
                 const octokit = github.getOctokit(githubToken);
                 const context = github.context;
+                const head_sha = context.payload.after ||
+                    ((_a = context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.head.sha) ||
+                    process.env.GITHUB_SHA;
+                yield octokit.rest.checks.create(Object.assign(Object.assign({}, context.repo), { name: "Mayhem for Code", head_sha, started_at: new Date().toISOString(), status: "in_progress" }));
                 core.debug(`${JSON.stringify(context)}`);
             }
             //process.env["MAYHEM_TOKEN"] = mayhemToken;
